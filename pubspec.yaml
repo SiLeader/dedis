@@ -3,8 +3,6 @@ description: Simple Redis Client for Dart
 version: 0.1.0
 homepage: https://github.com/SiLeader/dedis
 repository: https://github.com/SiLeader/dedis.git
-authors:
-  - SiLeader
 
 environment:
   sdk: '>=2.13.0 <3.0.0'
