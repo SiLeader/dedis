@@ -1,8 +1,8 @@
 name: dedis
 description: Simple Redis Client for Dart
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/SiLeader/dedis
-repository: https://github.com/SiLeader/dedis.git
+repository: https://github.com/SiLeader/dedis
 
 environment:
   sdk: '>=2.13.0 <3.0.0'

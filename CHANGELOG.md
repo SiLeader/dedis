@@ -19,3 +19,7 @@ Initial version.
 + pub/sub commands
     + psubscribe
     + publish
+
+## 0.1.1
+
+add codec export
