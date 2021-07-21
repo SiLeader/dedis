@@ -124,7 +124,8 @@ class CommandsClient<K, V> implements Commands<K, V> {
   @override
   Future<List<V>> lrange(K key, int startIndex, int endIndex) async {
     final keyString = keyCodec.encode<K>(key);
-    _connection.sendCommand(Resp(['LRANGE', keyString, startIndex, endIndex]));
+    _connection.sendCommand(Resp(
+        ['LRANGE', keyString, startIndex.toString(), endIndex.toString()]));
     final res = await _connection.receive();
     res.throwIfError();
 
@@ -137,14 +138,41 @@ class CommandsClient<K, V> implements Commands<K, V> {
   }
 
   @override
-  Future<bool> rpush(K key, V value) async {
+  Future<bool> rpush(K key, List<V> values) async {
     final keyString = keyCodec.encode<K>(key);
-    final valueString = valueCodec.encode<V>(value);
-    _connection.sendCommand(Resp(['RPUSH', keyString, valueString]));
+    final command = ['RPUSH', keyString];
+    command.addAll(values.map((e) => valueCodec.encode<V>(e)));
+
+    _connection.sendCommand(Resp(command));
     final res = await _connection.receive();
     res.throwIfError();
 
     return res.isInteger;
+  }
+
+  @override
+  Future<bool> lpush(K key, List<V> values) async {
+    final keyString = keyCodec.encode<K>(key);
+    final command = ['LPUSH', keyString];
+    command.addAll(values.map((e) => valueCodec.encode<V>(e)));
+
+    _connection.sendCommand(Resp(command));
+    final res = await _connection.receive();
+    res.throwIfError();
+
+    return res.isInteger;
+  }
+
+  @override
+  Future<bool> lset(K key, int index, V value) async {
+    final keyString = keyCodec.encode<K>(key);
+    final valueString = valueCodec.encode<V>(value);
+    _connection
+        .sendCommand(Resp(['LSET', keyString, index.toString(), valueString]));
+    final res = await _connection.receive();
+    res.throwIfError();
+
+    return res.stringValue == 'OK';
   }
 
   @override
@@ -195,7 +223,8 @@ class RedisClient {
     return RedisClient._(rpc);
   }
 
-  Commands<K, V> getCommands<K, V>() => CommandsClient<K, V>._(_connection);
+  CommandsClient<K, V> getCommands<K, V>() =>
+      CommandsClient<K, V>._(_connection);
 
   Future<void> close() => _connection.close();
 }

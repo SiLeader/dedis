@@ -35,6 +35,14 @@ Future<void> main() async {
   await Future.delayed(Duration(seconds: 1));
   print(await com.exists('key'));
 
+  print('lpush lrange lpush lrange rpush lset');
+  print(await com.lpush('list_key', ['value1']));
+  print(await com.lrange('list_key', 0, -1));
+  print(await com.lpush('list_key', ['value l1']));
+  print(await com.lrange('list_key', 0, -1));
+  print(await com.rpush('list_key', ['value r1']));
+  print(await com.lset('list_key', 1, 'value2'));
+
   print('pubsub');
   final psCli = await RedisClient.connect('localhost', 6379, db: 1);
   final PubSubCommands<String> psCom = psCli.getCommands<String, String>();

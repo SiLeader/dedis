@@ -23,3 +23,14 @@ Initial version.
 ## 0.1.1
 
 add codec export
+
+## 0.2.0
+
+add new commands
+
++ lset
++ lpush
+
+## 0.3.0
+
+support multiple elements for `lpush` and `rpush` commands.

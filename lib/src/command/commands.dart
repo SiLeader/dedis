@@ -10,7 +10,9 @@ abstract class KeysCommands<K, V> {
 
 abstract class ListCommands<K, V> {
   Future<List<V>> lrange(K key, int startIndex, int endIndex);
-  Future<bool> rpush(K key, V value);
+  Future<bool> rpush(K key, List<V> values);
+  Future<bool> lpush(K key, List<V> values);
+  Future<bool> lset(K key, int index, V value);
 }
 
 abstract class TransactionCommands<K, V> {
