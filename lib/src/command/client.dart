@@ -177,7 +177,7 @@ class CommandsClient<K, V> implements Commands<K, V> {
 
   @override
   Future<void> exec() async {
-    _connection.sendCommand(Resp(['MULTI']));
+    _connection.sendCommand(Resp(['EXEC']));
     await _connection.receive();
   }
 
