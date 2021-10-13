@@ -91,7 +91,8 @@ class Resp {
   }
 
   @override
-  String toString() => '$stringValue $arrayValue $integerValue $errorValue';
+  String toString() =>
+      '$type $stringValue $arrayValue $integerValue $errorValue';
 }
 
 class _DeserializeResult {
