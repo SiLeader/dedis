@@ -194,6 +194,7 @@ class CommandsClient<K, V> implements Commands<K, V> {
         .map((event) => event?.arrayValue)
         .where((event) => event != null)
         .map((event) => event!)
+        .where((e) => e.length == 4) // length == 3 is subscribed notification
         .map((event) => valueCodec.decode(event.last));
   }
 
@@ -220,6 +221,8 @@ class RedisClient {
     final rpc =
         await RedisProtocolClient.createConnection(host: host, port: port);
     rpc.sendCommand(Resp(['SELECT', '$db']));
+    final res = await rpc.receive();
+    res.throwIfError();
     return RedisClient._(rpc);
   }
 

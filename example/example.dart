@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dedis/dedis.dart';
-import 'package:pedantic/pedantic.dart';
 
 Future<void> main() async {
   final cli = await RedisClient.connect('localhost', 6379, db: 1);
   final com = cli.getCommands<String, String>();
+
+  print(await com.keys('*'));
 
   print('set get exists');
   print(await com.set('key', 'value1'));
@@ -47,7 +50,7 @@ Future<void> main() async {
   final psCli = await RedisClient.connect('localhost', 6379, db: 1);
   final PubSubCommands<String> psCom = psCli.getCommands<String, String>();
   unawaited(psCom.psubscribe('/test/*').forEach((element) {
-    print(element);
+    print('psubscribe: $element');
   }));
 
   print(await com.publish('/test/1', 'message/1'));
