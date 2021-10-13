@@ -34,3 +34,7 @@ add new commands
 ## 0.3.0
 
 support multiple elements for `lpush` and `rpush` commands.
+
+## 0.3.1
+
+fix bug: did not fetch SELECT command's reply.
