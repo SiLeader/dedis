@@ -10,12 +10,14 @@ Initial version.
     + keys
     + get
     + set
+    + getdel
 + list commands
     + lrange
     + rpush
 + transaction commands
     + multi
     + exec
+    + discard
 + pub/sub commands
     + psubscribe
     + publish
@@ -38,3 +40,10 @@ support multiple elements for `lpush` and `rpush` commands.
 ## 0.3.1
 
 fix bug: did not fetch SELECT command's reply.
+
+## 0.4.0
+
+add new commands
+
++ discard
++ getdel

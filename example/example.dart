@@ -18,9 +18,15 @@ Future<void> main() async {
   print(await com.get('key'));
   print(await com.exists('key'));
 
-  print('get del exists');
+  print('del get exists');
   print(await com.del('key'));
   print(await com.get('key'));
+  print(await com.exists('key'));
+
+  print('set get getdel exists');
+  print(await com.set('key', 'value2'));
+  print(await com.get('key'));
+  print(await com.getdel('key'));
   print(await com.exists('key'));
 
   print('set set set set keys keys');

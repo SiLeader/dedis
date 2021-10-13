@@ -1,5 +1,6 @@
 import 'package:dedis/src/exception.dart';
 
+/// Redis error reply
 class RedisError {
   final String prefix;
   final String message;
@@ -10,6 +11,7 @@ class RedisError {
   String toString() => '$prefix: $message';
 }
 
+/// Redis protocol type
 enum RespType {
   STRING,
   ARRAY,
@@ -19,6 +21,7 @@ enum RespType {
   UNKNOWN,
 }
 
+/// Redis protocol data
 class Resp {
   static const _CRLF = '\u000d\u000a';
 
@@ -26,6 +29,7 @@ class Resp {
 
   Resp(this.value);
 
+  /// serialize value implementation
   String _serializeValue(dynamic value, {bool isBulkString = true}) {
     if (value is String) {
       if (!isBulkString && !value.contains(RegExp('\s'))) {
@@ -47,11 +51,15 @@ class Resp {
     return '';
   }
 
+  /// serialize value in this instance
   String serialize() => _serializeValue(value);
 
+  /// deserialize and create [Resp]'s instance.
+  /// [s]: serialized data
   static Resp? deserialize(String s) =>
       _deserializeEntry(s.split(_CRLF), 0)?.resp;
 
+  /// type of [value]
   RespType get type {
     if (value == null) {
       return RespType.NULL;
@@ -71,17 +79,34 @@ class Resp {
     return RespType.UNKNOWN;
   }
 
+  /// is [type] == [RespType.NULL]
   bool get isNull => type == RespType.NULL;
+
+  /// is [type] == [RespType.STRING]
   bool get isString => type == RespType.STRING;
+
+  /// is [type] == [RespType.ARRAY]
   bool get isList => type == RespType.ARRAY;
+
+  /// is [type] == [RespType.INTEGER]
   bool get isInteger => type == RespType.INTEGER;
+
+  /// is [type] == [RespType.ERROR]
   bool get isError => type == RespType.ERROR;
 
+  /// Get String value if [isString] == true
   String? get stringValue => isString ? value as String : null;
+
+  /// Get List value if [isList] == true
   List<dynamic>? get arrayValue => isList ? value as List : null;
+
+  /// Get int value if [isInteger] == true
   int? get integerValue => isInteger ? value as int : null;
+
+  /// Get [RedisError] value if [isError] == true
   RedisError? get errorValue => isError ? value as RedisError : null;
 
+  /// throw exception if [isError] == true
   void throwIfError() {
     final err = errorValue;
     if (err == null) {
@@ -90,6 +115,7 @@ class Resp {
     throw RedisException('$err');
   }
 
+  /// for debug
   @override
   String toString() =>
       '$type $stringValue $arrayValue $integerValue $errorValue';

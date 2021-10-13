@@ -34,6 +34,7 @@ class _MultiCodec {
   }
 }
 
+/// All commands type inherited
 abstract class Commands<K, V>
     implements
         KeysCommands<K, V>,
@@ -41,11 +42,15 @@ abstract class Commands<K, V>
         TransactionCommands<K, V>,
         PubSubCommands<V> {}
 
+/// Implementation of [Commands]
 class CommandsClient<K, V> implements Commands<K, V> {
   final RedisProtocolClient _connection;
   CommandsClient._(this._connection);
 
+  /// key type codecs
   final _MultiCodec keyCodec = _MultiCodec();
+
+  /// value type codecs
   final _MultiCodec valueCodec = _MultiCodec();
 
   @override
@@ -77,6 +82,20 @@ class CommandsClient<K, V> implements Commands<K, V> {
     res.throwIfError();
 
     return res.isInteger && res.integerValue == 1;
+  }
+
+  @override
+  Future<V?> getdel(K key) async {
+    final keyString = keyCodec.encode<K>(key);
+    _connection.sendCommand(Resp(['GETDEL', keyString]));
+    final res = await _connection.receive();
+    res.throwIfError();
+
+    final str = res.stringValue;
+    if (str == null) {
+      return null;
+    }
+    return valueCodec.decode<V>(str);
   }
 
   @override
@@ -188,6 +207,12 @@ class CommandsClient<K, V> implements Commands<K, V> {
   }
 
   @override
+  Future<void> discard() async {
+    _connection.sendCommand(Resp(['DISCARD']));
+    await _connection.receive();
+  }
+
+  @override
   Stream<V> psubscribe(String pattern) {
     _connection.sendCommand(Resp(['PSUBSCRIBE', pattern]));
     return _connection.stream
@@ -208,11 +233,13 @@ class CommandsClient<K, V> implements Commands<K, V> {
   }
 }
 
+/// Redis Client
 class RedisClient {
   final RedisProtocolClient _connection;
 
   RedisClient._(this._connection);
 
+  /// Establish connection to Redis server and send SELECT command
   static Future<RedisClient> connect(
     String host,
     int port, {
@@ -226,8 +253,11 @@ class RedisClient {
     return RedisClient._(rpc);
   }
 
-  CommandsClient<K, V> getCommands<K, V>() =>
-      CommandsClient<K, V>._(_connection);
+  /// Get [Commands]
+  /// [K] : key type
+  /// [V] : value type
+  Commands<K, V> getCommands<K, V>() => CommandsClient<K, V>._(_connection);
 
+  /// close connection
   Future<void> close() => _connection.close();
 }
