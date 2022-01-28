@@ -231,6 +231,17 @@ class CommandsClient<K, V> implements Commands<K, V> {
     final res = await _connection.receive();
     return res.integerValue;
   }
+
+  @override
+  Future<String?> auth({String? username, required String password}) async {
+    if (username == null) {
+      _connection.sendCommand(Resp(['AUTH', password]));
+    } else {
+      _connection.sendCommand(Resp(['AUTH', username, password]));
+    }
+    final res = await _connection.receive();
+    return res.stringValue;
+  }
 }
 
 /// Redis Client
@@ -244,13 +255,35 @@ class RedisClient {
     String host,
     int port, {
     required int db,
+    String? username,
+    String? password,
   }) async {
     final rpc =
         await RedisProtocolClient.createConnection(host: host, port: port);
+
+    if (password != null) {
+      await _auth(rpc, username: username, password: password);
+    }
+
     rpc.sendCommand(Resp(['SELECT', '$db']));
     final res = await rpc.receive();
     res.throwIfError();
     return RedisClient._(rpc);
+  }
+
+  static Future<String?> _auth(
+    RedisProtocolClient connection, {
+    String? username,
+    required String password,
+  }) async {
+    if (username == null) {
+      connection.sendCommand(Resp(['AUTH', password]));
+    } else {
+      connection.sendCommand(Resp(['AUTH', username, password]));
+    }
+    final res = await connection.receive();
+    res.throwIfError();
+    return res.stringValue;
   }
 
   /// Get [Commands]

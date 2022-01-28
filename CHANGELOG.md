@@ -47,3 +47,7 @@ add new commands
 
 + discard
 + getdel
+
+## 0.4.1
+
+add authentication using AUTH command

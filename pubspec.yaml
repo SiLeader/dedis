@@ -1,6 +1,6 @@
 name: dedis
 description: Simple Redis Client for Dart (pubsub and multi/exec commands support)
-version: 0.4.0
+version: 0.4.1
 homepage: https://github.com/SiLeader/dedis
 repository: https://github.com/SiLeader/dedis
 

@@ -19,6 +19,8 @@
 + pub/sub commands
     + psubscribe
     + publish
++ authentication
+    + auth
 
 ## license
 Apache License 2.0

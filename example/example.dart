@@ -3,7 +3,12 @@ import 'dart:async';
 import 'package:dedis/dedis.dart';
 
 Future<void> main() async {
-  final cli = await RedisClient.connect('localhost', 6379, db: 1);
+  final cli = await RedisClient.connect(
+    'localhost',
+    6379,
+    db: 1,
+    password: '123456789',
+  );
   final com = cli.getCommands<String, String>();
 
   print(await com.keys('*'));
